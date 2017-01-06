@@ -1,0 +1,31 @@
+version: '2.1'
+services:
+  elasticsearch-master:
+    image: 8x8cloud/elasticsearch
+    command: elasticsearch --node.data=false --node.master=true
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    container_name: elasticsearch-master
+
+  elasticsearch-slave:
+    image: 8x8cloud/elasticsearch
+    depends_on:
+      - elasticsearch-master
+    command: elasticsearch --discovery.zen.ping.unicast.hosts=elasticsearch-master --node.master=false --node.data=true
+
+  kibana:
+    image: 8x8cloud/kibana
+    depends_on:
+      - elasticsearch-master
+    ports:
+      - "5601:5601"
+    environment:
+      - "ELASTICSEARCH_HOST=http://elasticsearch-master:9200"
+
+  logstash:
+    image: 8x8cloud/logstash-request-logs
+    depends_on:
+      - elasticsearch-master
+    volumes:
+      - "${LOG_DIR:-./data}:/input:ro"
