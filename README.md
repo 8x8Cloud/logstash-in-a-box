@@ -15,6 +15,8 @@ Using the `docker-compose.yml` you can spin up a set of Docker images to analyze
 Run it:
 
 ```bash
+# This directory must include at least one file with request.log anywhere in the file name
+# (IE: request.log, foo.request.log, request.log.20170101)
 export LOG_DIR="/path/to/request/logs"
 wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docker-compose.yml
 docker-compose -f docker-compose.yml up -d
@@ -46,6 +48,8 @@ Maybe you're running load tests like the image above, and you want to know what'
 Don't want to parse request logs? Want to configure Logstash in a different way? Grab the `docker-compose.config.yml` file, and run it like this:
 
 ```bash
+# This directory must include at least one file with request.log anywhere in the file name
+# (IE: request.log, foo.request.log, request.log.20170101)
 export LOG_DIR="/path/to/request/logs"
 export CONFIG_DIR="/path/to/logstash/conf"
 docker-compose -f docker-compose.yml -f docker-compose.config.yml up -d
@@ -68,7 +72,7 @@ docker-compose down
 docker volume ls -f dangling=true -q | xargs docker ...
 ```
 
-*(Please note the above will destroy **all** dangling volumes, so make sure you mean to run it. Otherwise, you can delete them one at a time using `docker volume rm`. Ellipsis for your protection.)*
+*(Please note the above will destroy all dangling volumes, so make sure you mean to run it. Otherwise, you can delete them one at a time using `docker volume rm`. Ellipsis for your protection.)*
 
 #### Scaling in slave nodes
 
