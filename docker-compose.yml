@@ -1,31 +1,82 @@
 version: '2.1'
 services:
   elasticsearch-master:
-    image: 8x8cloud/elasticsearch:2.4.3
-    command: elasticsearch --node.data=false --node.master=true
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.1.2
     ports:
       - "9200:9200"
       - "9300:9300"
     container_name: elasticsearch-master
+    environment:
+      - http.host=0.0.0.0
+      - xpack.security.enabled=false
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata1:/usr/share/elasticsearch/data
+    networks:
+      - esnet
 
-  elasticsearch-slave:
-    image: 8x8cloud/elasticsearch:2.4.3
+  elasticsearch-slave-1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.1.2
     depends_on:
       - elasticsearch-master
-    command: elasticsearch --discovery.zen.ping.unicast.hosts=elasticsearch-master --node.master=false --node.data=true
+    container_name: elasticsearch-slave-1
+    environment:
+      - discovery.zen.ping.unicast.hosts=elasticsearch-master
+      - xpack.security.enabled=false
+      - bootstrap.memory_lock=true
+      - node.master=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    cap_add:
+      - IPC_LOCK
+    volumes:
+      - esdata2:/usr/share/elasticsearch/data
+    networks:
+      - esnet
 
   kibana:
-    image: 8x8cloud/kibana:4.6.3
+    image: docker.elastic.co/kibana/kibana:5.1.2
     depends_on:
       - elasticsearch-master
     ports:
       - "5601:5601"
     environment:
-      - "ELASTICSEARCH_HOST=http://elasticsearch-master:9200"
+      - ELASTICSEARCH_URL=http://elasticsearch-master:9200
+      - xpack.security.enabled=false
+    networks:
+      - esnet
 
   logstash:
-    image: 8x8cloud/logstash-in-a-box:latest
+    image: 8x8cloud/logstash-in-a-box:5.x
     depends_on:
       - elasticsearch-master
     volumes:
       - "${LOG_DIR:-./data}:/input:ro"
+    networks:
+      - esnet
+
+volumes:
+  esdata1:
+    driver: local
+  esdata2:
+    driver: local
+
+networks:
+  esnet:
+    driver: bridge

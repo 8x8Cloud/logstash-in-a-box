@@ -13,7 +13,7 @@ fi
 # Run as user "logstash" if the command is "logstash"
 if [ "$1" = 'logstash' ]; then
 	echo "sleeping to allow cluster to spin up..."
-	sleep 15
+	sleep 25
 
   # If no one has passed us in a configuration volume, let's mount a fake one
 	# and use that.
