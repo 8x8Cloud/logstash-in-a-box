@@ -2,17 +2,19 @@
 FROM frolvlad/alpine-oraclejdk8:slim
 MAINTAINER Greg Feigenson <greg.feigenson@8x8.com>
 
-ENV LOGSTASH_VERSION=2.4.1 LOGSTASH_HOME=/usr/share/logstash
+ENV LOGSTASH_VERSION=5.1.2 LOGSTASH_HOME=/usr/share/logstash
 ENV PATH=${PATH}:${LOGSTASH_HOME}/bin
 
 RUN apk update && apk upgrade && apk add --no-cache ca-certificates curl bash su-exec && \
-    curl -Ls https://download.elastic.co/logstash/logstash/logstash-${LOGSTASH_VERSION}.tar.gz | tar -xz -C /usr/share && \
+    curl -Ls https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz | tar -xz -C /usr/share && \
     ln -s /usr/share/logstash-$LOGSTASH_VERSION $LOGSTASH_HOME && \
 
     # Add a non-root user
     addgroup -S logstash && \
     adduser -S -G logstash logstash && \
-    chown -R logstash /usr/share/logstash && \
+    mkdir -p /usr/share/logstash/logs/ && \
+    chown -R logstash:logstash /usr/share/logstash-$LOGSTASH_VERSION && \
+    ls -alh /usr/share/logstash-5.1.2 && \
 
     # Clean up after ourselves...
     rm -rf /tmp/* /var/cache/apk/* && apk del ca-certificates

@@ -2,13 +2,13 @@ Request Log Analyzer
 =====
 
 ## What, pray tell, is in the box?!?
-![What's in the box?](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docs/whats-in-the-box.jpg)
+![What's in the box?](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/whats-in-the-box.jpg)
 
 Logstash. Logstash is what's in the box.
 
 Using the `docker-compose.yml` you can spin up a set of Docker images to analyze NCSA-style request logs, and graph them with handy dashboards:
 
-![Kibana dashboard](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docs/kibana-dashboard.png)
+![Kibana dashboard](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/kibana-dashboard.png)
 
 ## Awesome, how do I use it?
 
@@ -18,24 +18,22 @@ Run it:
 # This directory must include at least one file with request.log anywhere in the file name
 # (IE: request.log, foo.request.log, request.log.20170101)
 export LOG_DIR="/path/to/request/logs"
-wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docker-compose.yml
+wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docker-compose.yml
 docker-compose -f docker-compose.yml up -d
 ```
 
 You don't even need to get this repo to use it - only the [docker-compose.yml](docker-compose.yml) file. Want to build your own image and hack around? Grab the repo.
 
 Once running, you can find your services at:
- * [Marvel at http://localhost:5601/app/marvel](http://localhost:5601/app/marvel)
+ * [Monitoring at http://localhost:5601/app/monitoring](http://localhost:5601/app/monitoring)
  * [Kibana at http://localhost:5601/app/kibana](http://localhost:5601/app/kibana)
 
 ## What's it going to do?
 It'll spin up a cluster that looks like:
- * 1 Elasticsearch master (`node.data` set to false, `node.master` set to true)
- * 1 Elasticsearch slave (`node.data` set to true, `node.master` set to false)
+ * 1 Elasticsearch master
+ * 1 Elasticsearch slave (`node.master` set to false)
  * 1 Kibana node pointing at the ES master
  * 1 Logstash node pointing at the ES master
-
-The images for these containers all come from the [8x8cloud repo](https://hub.docker.com/u/8x8cloud/).
 
 Once the cluster spins up, the Logstash node will use a pre-baked `logstash.conf` and Elasticsearch index template for your logs. The expected format is NCSA-request with an extra "latency" value at the end (IE: first byte to last byte). Any files in the specified `LOG_DIR` environment variable with the string `request.log` in it (prefix, suffix, wherever) will be indexed. That means `bob-request.log.12345` will be indexed, as will `request.log` or `request.log.12345`.
 
@@ -55,11 +53,11 @@ export CONFIG_DIR="/path/to/logstash/conf"
 docker-compose -f docker-compose.yml -f docker-compose.config.yml up -d
 ```
 
-Maybe you have a fixed path, and want to know how many requests Customer X got instead of Customer Y. Maybe your request format is weird. Maybe you're a masochist. Who cares! Feel free to grab the [logstash.conf](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/app/logstash.conf) and [jetty-request-template.json](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/app/jetty-request-template.json) out of the `app` directory as a guide.
+Maybe you have a fixed path, and want to know how many requests Customer X got instead of Customer Y. Maybe your request format is weird. Maybe you're a masochist. Who cares! Feel free to grab the [logstash.conf](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/logstash.conf) and [jetty-request-template.json](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/jetty-request-template.json) out of the `app` directory as a guide.
 
-Oh, it comes with Marvel too, so you can know whether or not your indexing is still going:
+Oh, it comes with Monitoring too, so you can know whether or not your indexing is still going:
 
-![Marvel stats](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docs/marvel-screen.png)
+![Monitoring stats](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/monitoring-screen.png)
 
 ## Other things of interest
 
@@ -73,18 +71,6 @@ docker volume ls -f dangling=true -q | xargs docker ...
 ```
 
 *(Please note the above will destroy all dangling volumes, so make sure you mean to run it. Otherwise, you can delete them one at a time using `docker volume rm`. Ellipsis for your protection.)*
-
-#### Scaling in slave nodes
-
-Want to scale more ElasticSearch nodes in?
-```bash
-# Now we'll have a total of 3 slave nodes with data on them
-docker-compose scale elasticsearch-slave=3
-```
-
-You're probably going to want to scale this to 3 slaves as Marvel may complain if you don't. There's not really much point in going over 3 Elasticsearch instances as Logstash tends to be the indexing bottleneck, and not Elasticsearch. Remember that each Elasticsearch instance will use a dedicated block of memory for its minimum heap size, so setting this to a high number will eventually hurt you.
-
-Why not set this out of the box? That feature won't exist until Docker Compose v3 (hopefully).
 
 ## What is this?
 The Docker image itself is an Alpine Linux build based on `frolvlad/alpine-oraclejdk8:slim`, that then installs a copy of Logstash. Upon starting the image, it will attempt to restore a set of Kibana dashboards, index patterns, searches and visualizations  in the `kibana-goodies` directory. These were hand crafted objects exported using one of the dump scripts from the [Beats Dashboards](https://github.com/elastic/beats-dashboards) (see the `save` directory).
