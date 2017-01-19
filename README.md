@@ -2,13 +2,13 @@ Request Log Analyzer
 =====
 
 ## What, pray tell, is in the box?!?
-![What's in the box?](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docs/whats-in-the-box.jpg)
+![What's in the box?](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/whats-in-the-box.jpg)
 
 Logstash. Logstash is what's in the box.
 
 Using the `docker-compose.yml` you can spin up a set of Docker images to analyze NCSA-style request logs, and graph them with handy dashboards:
 
-![Kibana dashboard](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docs/kibana-dashboard.png)
+![Kibana dashboard](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/kibana-dashboard.png)
 
 ## Awesome, how do I use it?
 
@@ -18,7 +18,7 @@ Run it:
 # This directory must include at least one file with request.log anywhere in the file name
 # (IE: request.log, foo.request.log, request.log.20170101)
 export LOG_DIR="/path/to/request/logs"
-wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docker-compose.yml
+wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docker-compose.yml
 docker-compose -f docker-compose.yml up -d
 ```
 
@@ -53,11 +53,11 @@ export CONFIG_DIR="/path/to/logstash/conf"
 docker-compose -f docker-compose.yml -f docker-compose.config.yml up -d
 ```
 
-Maybe you have a fixed path, and want to know how many requests Customer X got instead of Customer Y. Maybe your request format is weird. Maybe you're a masochist. Who cares! Feel free to grab the [logstash.conf](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/app/logstash.conf) and [jetty-request-template.json](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/app/jetty-request-template.json) out of the `app` directory as a guide.
+Maybe you have a fixed path, and want to know how many requests Customer X got instead of Customer Y. Maybe your request format is weird. Maybe you're a masochist. Who cares! Feel free to grab the [logstash.conf](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/logstash.conf) and [jetty-request-template.json](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/jetty-request-template.json) out of the `app` directory as a guide.
 
 Oh, it comes with Monitoring too, so you can know whether or not your indexing is still going:
 
-![Monitoring stats](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/master/docs/monitoring-screen.png)
+![Monitoring stats](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/monitoring-screen.png)
 
 ## Other things of interest
 
