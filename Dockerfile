@@ -14,7 +14,6 @@ RUN apk update && apk upgrade && apk add --no-cache ca-certificates curl bash su
     adduser -S -G logstash logstash && \
     mkdir -p /usr/share/logstash/logs/ && \
     chown -R logstash:logstash /usr/share/logstash-$LOGSTASH_VERSION && \
-    ls -alh /usr/share/logstash-5.1.2 && \
 
     # Clean up after ourselves...
     rm -rf /tmp/* /var/cache/apk/* && apk del ca-certificates
