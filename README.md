@@ -12,6 +12,8 @@ Using the `docker-compose.yml` you can spin up a set of Docker images to analyze
 
 ## Awesome, how do I use it?
 
+You don't even need to get this repo to use it - only the [docker-compose.yml](docker-compose.yml) file. Want to build your own image and hack around? Grab the repo.
+
 Run it:
 
 ```bash
@@ -22,7 +24,17 @@ wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docker-com
 docker-compose -f docker-compose.yml up -d
 ```
 
-You don't even need to get this repo to use it - only the [docker-compose.yml](docker-compose.yml) file. Want to build your own image and hack around? Grab the repo.
+Give Logstash some time to index your logs, then go <a href="http://localhost:5601/app/kibana#/dashboard/Load-Result-Dashboard?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-30d,mode:quick,to:now))&_a=(filters:!(),options:(darkTheme:!f),panels:!((col:1,id:Total-Sample-Calls,panelIndex:1,row:1,size_x:3,size_y:2,type:visualization),(col:1,id:Verb-Breakdown,panelIndex:2,row:6,size_x:3,size_y:2,type:visualization),(col:1,id:Response-Code-Breakdown,panelIndex:3,row:3,size_x:3,size_y:3,type:visualization),(col:4,id:'Response-Time-Histogram-(per-minute)',panelIndex:4,row:1,size_x:9,size_y:4,type:visualization),(col:4,id:Requests-Per-Second,panelIndex:5,row:5,size_x:9,size_y:3,type:visualization),(col:1,id:'Max-Response-Time-(per-minute)',panelIndex:6,row:8,size_x:4,size_y:3,type:visualization),(col:5,id:'Min-Response-Time-(per-minute)',panelIndex:7,row:8,size_x:4,size_y:3,type:visualization),(col:9,id:'Average-Response-Time-(per-minute),-with-Standard-Deviation',panelIndex:8,row:8,size_x:4,size_y:3,type:visualization)),query:(query_string:(analyze_wildcard:!t,query:'*')),title:'Load%20Result%20Dashboad',uiState:(P-2:(vis:(params:(sort:(columnIndex:!n,direction:!n)))),P-3:(vis:(params:(sort:(columnIndex:!n,direction:!n))))))">here</a>. This will use a pre-configured dashboard for the past 30 days. If your data is older than 30 days, you can use the time picker in the upper right-hand corner of the dashboard:
+
+![Kibana Timepicker](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/kibana-time-picker.png)
+
+## How do I know when it's done? Or what it's doing?
+
+This is what the [monitoring](http://localhost:5601/app/monitoring#/elasticsearch/indices) component does.
+
+Select one of the indices that has the word "logstash" in it, and watch both the indexing rate and document count. If this rate drops to zero and stays there a while, it's probably done indexing your logs.
+
+## When it's done running
 
 Once running, you can find your services at:
  * [Monitoring at http://localhost:5601/app/monitoring](http://localhost:5601/app/monitoring)
@@ -54,10 +66,6 @@ docker-compose -f docker-compose.yml -f docker-compose.config.yml up -d
 ```
 
 Maybe you have a fixed path, and want to know how many requests Customer X got instead of Customer Y. Maybe your request format is weird. Maybe you're a masochist. Who cares! Feel free to grab the [logstash.conf](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/logstash.conf) and [jetty-request-template.json](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/jetty-request-template.json) out of the `app` directory as a guide.
-
-Oh, it comes with Monitoring too, so you can know whether or not your indexing is still going:
-
-![Monitoring stats](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/monitoring-screen.png)
 
 ## Other things of interest
 
