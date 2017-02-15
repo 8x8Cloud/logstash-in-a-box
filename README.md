@@ -10,6 +10,10 @@ Using the `docker-compose.yml` you can spin up a set of Docker images to analyze
 
 ![Kibana dashboard](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/kibana-dashboard.png)
 
+Results too fast? Not sure you're even reading any bytes? Here's a handy dashboard to check the response sizes:
+
+![Kibana dashboard - bytecount](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/kibana-dashboard-bytes.png)
+
 ## Awesome, how do I use it?
 
 You don't even need to get this repo to use it - only the [docker-compose.yml](docker-compose.yml) file. Want to build your own image and hack around? Grab the repo.
