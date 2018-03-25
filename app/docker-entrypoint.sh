@@ -27,7 +27,7 @@ if [ "$1" = 'logstash' ]; then
 	# TODO: this is a very hard-coded solution, but it's what we've got for now:
 	# https://discuss.elastic.co/t/kibana-5-0-ingest-api/65043/4. Check back later
 	# to see if this improves.
-	curl -XPUT http://elasticsearch-master:9200/.kibana/config/5.1.2 -d '{"defaultIndex" : "logstash-*", "buildNum": 14588}'
+	curl -XPUT http://elasticsearch-master:9200/.kibana/config/5.6.8 -d '{"defaultIndex" : "logstash-*", "buildNum": 14588}'
 
 	echo "Logging that stash!"
 	set -- su-exec logstash "$@"

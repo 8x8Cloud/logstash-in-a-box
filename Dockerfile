@@ -2,7 +2,7 @@
 FROM frolvlad/alpine-oraclejdk8:slim
 MAINTAINER Greg Feigenson <greg.feigenson@8x8.com>
 
-ENV LOGSTASH_VERSION=5.1.2 LOGSTASH_HOME=/usr/share/logstash
+ENV LOGSTASH_VERSION=5.6.8 LOGSTASH_HOME=/usr/share/logstash
 ENV PATH=${PATH}:${LOGSTASH_HOME}/bin
 
 RUN apk update && apk upgrade && apk add --no-cache ca-certificates curl bash su-exec && \
