@@ -15,6 +15,9 @@ if [ "$1" = 'logstash' ]; then
 	echo "sleeping to allow cluster to spin up..."
 	sleep 25
 
+    echo "enabling escapes in config file..."
+	sed -i 's/# config.support_escapes: false/config.support_escapes: true/' /usr/share/logstash/config/logstash.yml
+
   # If no one has passed us in a configuration volume, let's mount a fake one
 	# and use that.
 	if [ ! -d /config ]; then
