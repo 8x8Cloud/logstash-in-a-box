@@ -1,48 +1,27 @@
 #!/bin/bash
-
-# This is based on https://github.com/elastic/beats-dashboards/blob/21cbf6234a50af130dae69f2b0afb6df0204e959/load.sh
-# from the Beats framework dashboards. The ElasticSearch objects were dumped using
-# https://github.com/elastic/beats-dashboards/tree/master/save.
-ELASTICSEARCH=http://elasticsearch-master:9200
+KIBANA=http://kibana:5601
 CURL=curl
-KIBANA_INDEX=".kibana"
+XSRF_HEADER='kbn-xsrf:true'
 
-DIR=.
-echo "Loading dashboards to ${ELASTICSEARCH} in ${KIBANA_INDEX}"
-
-for file in ${DIR}/search/*.json
-do
-    NAME=`basename ${file} .json`
-    echo "Loading search ${NAME}:"
-    ${CURL} -XPUT ${ELASTICSEARCH}/${KIBANA_INDEX}/search/${NAME} \
-        -d @${file} || exit 1
-    echo
+# Wait for Kibana. Borrowed from https://github.com/elastic/stack-docker/blob/master/scripts/setup-beat.sh.
+echo "Waiting for Kibana to spin up..."
+until curl -s ${KIBANA}; do
+    sleep 2
 done
+sleep 5
 
-for file in ${DIR}/visualization/*.json
-do
-    NAME=`basename ${file} .json`
-    echo "Loading visualization ${NAME}:"
-    ${CURL} -XPUT ${ELASTICSEARCH}/${KIBANA_INDEX}/visualization/${NAME} \
-        -d @${file} || exit 1
-    echo
-done
+# Create our index pattern on our Logstash-ingested data.
+echo "Loading index pattern..."
+$CURL "${KIBANA}/api/saved_objects/index-pattern/15338860-4798-11e8-ba80-d3e7b5294494?overwrite=true" \
+       -H 'Content-Type: application/json;charset=UTF-8' \
+       -H 'Accept: application/json, text/plain, */*'  \
+       -H ${XSRF_HEADER} \
+       --data-binary '{"attributes":{"title":"logstash-*","timeFieldName":"@timestamp"}}' 2&> /dev/null
 
-for file in ${DIR}/dashboard/*.json
-do
-    NAME=`basename ${file} .json`
-    echo "Loading dashboard ${NAME}:"
-    ${CURL} -XPUT ${ELASTICSEARCH}/${KIBANA_INDEX}/dashboard/${NAME} \
-        -d @${file} || exit 1
-    echo
-done
+# Import all the previously exported saved objects. There's no direct API for this, so we need to parse the 
+# JSON and import each object individually.
+python kibana-goodies/import.py
 
-for file in ${DIR}/index-pattern/*.json
-do
-    NAME=`awk '$1 == "\"title\":" {gsub(/[",]/, "", $2); print $2}' ${file}`
-    echo "Loading index pattern ${NAME}:"
-
-    ${CURL} -XPUT ${ELASTICSEARCH}/${KIBANA_INDEX}/index-pattern/${NAME} \
-        -d @${file} || exit 1
-    echo
-done
+# And once we're done, delegate to the normal entrypoint
+echo "Continuing to our regularly scheduled logstash..."
+/usr/local/bin/docker-entrypoint
