@@ -2,13 +2,13 @@ Request Log Analyzer
 =====
 
 ## What, pray tell, is in the box?!?
-![What's in the box?](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/whats-in-the-box.jpg)
+![What's in the box?](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/6.x/docs/whats-in-the-box.jpg)
 
 Logstash. Logstash is what's in the box.
 
 Using the `docker-compose.yml` you can spin up a set of Docker images to analyze NCSA-style request logs, and graph them with handy dashboards:
 
-![Kibana dashboard](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/kibana-dashboard.png)
+![Kibana dashboard](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/6.x/docs/kibana-dashboard.png)
 
 ## Awesome, how do I use it?
 
@@ -20,7 +20,7 @@ You don't even need to get this repo to use it - only the [docker-compose.yml](d
 # This directory must include at least one file with request.log anywhere in the file name
 # (IE: request.log, foo.request.log, request.log.20170101)
 export LOG_DIR="/path/to/request/logs"
-wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docker-compose.yml
+wget https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/6.x/docker-compose.yml
 docker-compose -f docker-compose.yml up -d
 ```
 
@@ -28,13 +28,13 @@ docker-compose -f docker-compose.yml up -d
 
 This will use a pre-configured dashboard for the past 30 days. If your data is older than 30 days, you can use the time picker in the upper right-hand corner of the dashboard:
 
-![Kibana Timepicker](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/kibana-time-picker.png)
+![Kibana Timepicker](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/6.x/docs/kibana-time-picker.png)
 
 ## How do I know when it's done? Or what it's doing?
 
 This is what the [monitoring](http://localhost:5601/app/monitoring#/elasticsearch) component does:
 
-![Kibana Monitoring of Index](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/docs/monitoring-screen.png)
+![Kibana Monitoring of Index](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/6.x/docs/monitoring-screen.png)
 
 Select one of the indices that has the word "logstash" in it, and watch both the indexing rate and document count. If this rate drops to zero and stays there a while, it's probably done indexing your logs.
 
@@ -42,7 +42,7 @@ Select one of the indices that has the word "logstash" in it, and watch both the
 
 Once running, you can find your services at:
  * [Monitoring at http://localhost:5601/app/monitoring](http://localhost:5601/app/monitoring)
- * [Kibana at http://localhost:5601/app/monitoring#/kibana](http://localhost:5601/app/monitoring#/kibana)
+ * [Kibana at http://localhost:5601/app/kibana](http://localhost:5601/app/kibana)
 
 ## What's it going to do?
 It'll spin up a cluster that looks like:
@@ -68,7 +68,7 @@ export CONFIG_DIR="/path/to/logstash/conf"
 docker-compose -f docker-compose.yml -f docker-compose.config.yml up -d
 ```
 
-Maybe you have a fixed path, and want to know how many requests Customer X got instead of Customer Y. Maybe your request format is weird. Maybe you're a masochist. Who cares! Feel free to grab the [logstash.conf](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/logstash.conf) and [jetty-request-template.json](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/5.x/app/jetty-request-template.json) out of the `app` directory as a guide.
+Maybe you have a fixed path, and want to know how many requests Customer X got instead of Customer Y. Maybe your request format is weird. Maybe you're a masochist. Who cares! Feel free to grab the [logstash.conf](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/6.x/app/logstash/logstash.conf) and [jetty-request-template.json](https://raw.githubusercontent.com/8x8Cloud/logstash-in-a-box/6.x/app/logstash/jetty-request-template.json) out of the `app` directory as a guide.
 
 ## Other things of interest
 
