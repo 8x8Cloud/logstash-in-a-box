@@ -1,6 +1,5 @@
-version: '2.1'
+version: '3.5'
 services:
   logstash:
     volumes:
       - "${LOG_DIR:-./data}:/input:ro"
-      - "${CONFIG_DIR:-./app}:/config:ro"

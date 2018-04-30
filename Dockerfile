@@ -1,29 +1,14 @@
-# Use one of the smaller Alpine based distros with Java 8
-FROM frolvlad/alpine-oraclejdk8:slim
-MAINTAINER Greg Feigenson <greg.feigenson@8x8.com>
+FROM docker.elastic.co/logstash/logstash:6.2.3
+LABEL MAINTAINER Greg Feigenson <kog@epiphanic.org>
 
-ENV LOGSTASH_VERSION=5.6.8 LOGSTASH_HOME=/usr/share/logstash
-ENV PATH=${PATH}:${LOGSTASH_HOME}/bin
+ENV LOGSTASH_HOME=/usr/share/logstash
 
-RUN apk update && apk upgrade && apk add --no-cache ca-certificates curl bash su-exec && \
-    curl -Ls https://artifacts.elastic.co/downloads/logstash/logstash-${LOGSTASH_VERSION}.tar.gz | tar -xz -C /usr/share && \
-    ln -s /usr/share/logstash-$LOGSTASH_VERSION $LOGSTASH_HOME && \
+# Copy our logstash configs.
+COPY app/logstash/logstash.conf ${LOGSTASH_HOME}/pipeline/logstash.conf
+COPY app/logstash/jetty-request-template.json ${LOGSTASH_HOME}/
+COPY app/logstash/logstash.yml ${LOGSTASH_HOME}/config/logstash.yml
 
-    # Add a non-root user
-    addgroup -S logstash && \
-    adduser -S -G logstash logstash && \
-    mkdir -p /usr/share/logstash/logs/ && \
-    chown -R logstash:logstash /usr/share/logstash-$LOGSTASH_VERSION && \
+# Copy our dashboard components.
+COPY /app/kibana-goodies ${LOGSTASH_HOME}/kibana-goodies
 
-    # Clean up after ourselves...
-    rm -rf /tmp/* /var/cache/apk/* && apk del ca-certificates
-
-# Copy the stuff we need to copy
-COPY app/docker-entrypoint.sh /
-COPY app/kibana-goodies ${LOGSTASH_HOME}/bin/kibana-goodies
-COPY app/logstash.conf ${LOGSTASH_HOME}/bin
-COPY app/jetty-request-template.json ${LOGSTASH_HOME}/bin
-
-# Get ready to run
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["logstash", "-f",  "/config/logstash.conf"]
+ENTRYPOINT ["kibana-goodies/load.sh"]
